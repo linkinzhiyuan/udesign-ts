@@ -6,4 +6,6 @@ export type { ButtonProps } from './button';
 
 // export * from './buttonHelpers';
 
+export type ButtonType = typeof Button;
+
 export default Button;

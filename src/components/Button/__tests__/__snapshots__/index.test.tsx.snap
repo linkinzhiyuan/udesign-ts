@@ -1,0 +1,22 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Button rtl render component should be rendered correctly in RTL direction 1`] = `
+<button
+  class="uDesign-btn uDesign-btn-default uDesign-btn-undefined"
+  type="button"
+/>
+`;
+
+exports[`Button rtl render component should be rendered correctly in RTL direction 2`] = `
+<button
+  class="uDesign-btn uDesign-btn-default uDesign-btn-large"
+  type="button"
+/>
+`;
+
+exports[`Button rtl render component should be rendered correctly in RTL direction 3`] = `
+<button
+  class="uDesign-btn uDesign-btn-default uDesign-btn-small"
+  type="button"
+/>
+`;

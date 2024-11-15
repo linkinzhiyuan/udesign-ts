@@ -132,4 +132,7 @@ type CompoundedComponent = React.ForwardRefExoticComponent<ButtonProps & React.R
 }
 
 const Button = React.forwardRef<unknown, ButtonProps>(InternalButton) as CompoundedComponent
+
+Button.__ANT_BUTTON = true
+
 export { Button }
