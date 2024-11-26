@@ -1,12 +1,13 @@
 import React from 'react';
 import cls from 'classnames';
 import omit from 'rc-util/lib/omit';
+import LoadingIcon from './LoadingIcon';
 import './style/index.less';
 
 const ButtonTypes = ['primary', 'default', 'ghost','dashed', 'text', 'link'] as const;
 type ButtonType = typeof ButtonTypes[number];
 
-const shapeMap = ['circle', 'round'] as const;
+const shapeMap = ['circle', 'round', 'default'] as const;
 type ShapeType = typeof shapeMap[number];
 
 const sizeMap = ['small', 'default', 'large'] as const;
@@ -48,8 +49,30 @@ export type ButtonProps = Partial<NativeButtonProps & AnchorButtonProps>
 
 type Loading = number | boolean
 
+const defaultGetPrefixCls = (suffixCls?: string, customizePrefixCls?: string) => {
+  if (customizePrefixCls) return customizePrefixCls;
+
+  return suffixCls ? `ant-${suffixCls}` : 'ant';
+};
+
+export const getPrefixCls: (suffixCls?: string, customizePrefixCls?: string) => string = defaultGetPrefixCls
+
 const InternalButton: React.ForwardRefRenderFunction<unknown,ButtonProps> = (props, ref) => {
-  const { loading = false,type = 'default', disabled: customDisabled, size: customizeSize, className,prefixCls, children, ...rest } = props;
+  const { 
+    loading = false,
+    type = 'default', 
+    disabled: customDisabled, 
+    size: customizeSize, 
+    className, 
+    prefixCls: customPrefixCls, 
+    icon, 
+    block = false,
+    ghost = false,
+    danger,
+    shape = 'default',
+    children, 
+    ...rest 
+  } = props;
   const buttonRef = ref as any || React.createRef<HTMLElement>();
 
   // ========================= Disabled ==========================
@@ -95,17 +118,35 @@ const InternalButton: React.ForwardRefRenderFunction<unknown,ButtonProps> = (pro
   }, [loadingOrDelay])
 
 
+  const prefixCls = getPrefixCls('btn', customPrefixCls)
+  const iconType = innerLoading ? 'loading' : icon;
   // className
   const classes = cls(
     prefixCls,
-    'uDesign-btn',
-    `uDesign-btn-${type}`,
-    `uDesign-btn-${customizeSize}`,
-    mergeDisabled && 'uDesign-btn--disabled',
+    mergeDisabled && 'ud-btn-disabled',
+    {
+      [`${prefixCls}-loading`]: innerLoading,
+      [`${prefixCls}-${type}`]: type,
+      [`${prefixCls}-icon-only`]: !children && children !== 0 && !!iconType,
+      [`${prefixCls}-background-ghost`]: ghost,
+      [`${prefixCls}-danger`]: danger,
+      [`${prefixCls}-block`]: block,
+      [`${prefixCls}-${customizeSize}`]: customizeSize,
+      [`${prefixCls}-${shape}`]: shape,
+    },
     className,
   )
 
-  const iconNode = <></>
+  const iconNode = icon && !innerLoading ? (
+    icon
+  ) : (
+    <LoadingIcon
+      existIcon={!!icon}
+      prefixCls={prefixCls}
+      loading={!!innerLoading}
+    />
+  )
+
 
   // 存在链接地址即为 a标签
   if (linkButtonRestProps.href !== undefined) {

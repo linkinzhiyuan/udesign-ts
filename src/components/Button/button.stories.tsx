@@ -29,6 +29,14 @@ export const Primary: Story = {
   args: {
     size: 'default',
     type: 'primary',
+    loading: true,
+    children: 'Button'
+  },
+};
+export const Ghost: Story = {
+  args: {
+    size: 'default',
+    type: 'ghost',
     children: 'Button'
   },
 };
@@ -37,6 +45,7 @@ export const Large: Story = {
   args: {
     size: 'large',
     type: 'dashed',
+    loading: true,
     children: 'large'
   },
 };
