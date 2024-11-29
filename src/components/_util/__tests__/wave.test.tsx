@@ -1,5 +1,5 @@
 import React from 'react';
-import mountTest from '../../../tests/shared/mountTest';
+import mountTest from '../../../tests/mountTest';
 import { render, waitFakeTimer, fireEvent, act } from '../../../tests/utils';
 import ConfigProvider from '../../config-provider';
 import Wave from '../wave';
