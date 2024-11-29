@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import classNames from "classnames";
+import './style/index.less';
+import RcMenu from 'rc-menu'
+import { MenuItemProps } from './menuItem'
 
 type MenuMode = "horizontal" | "vertical";
 type selectCallback = (selectedIndex: string) => void;
@@ -14,27 +17,35 @@ export interface MenuProps {
   className?: string;
   children?: React.ReactNode;
   style?: React.CSSProperties;
+  theme?: 'light' | 'dark'
 }
 
 export interface MenuContextProps {
   index: string;
   onSelect?: selectCallback;
   mode?: MenuMode;
+  prefixCls?: string,
+  defaultOpenSubMenus?: string[]
 }
 
 export const MenuContext = React.createContext<MenuContextProps>({ index: "0" });
 
+
+const defaultGetPrefixCls = (suffixCls?: string, customizePrefixCls?: string) => {
+  if (customizePrefixCls) return customizePrefixCls;
+
+  return suffixCls ? `ant-${suffixCls}` : 'ant';
+};
+
+export const getPrefixCls: (suffixCls?: string, customizePrefixCls?: string) => string = defaultGetPrefixCls
+
+
 const Menu: React.FC<MenuProps> = (props) => {
-  const { defaultIndex = "0", mode = "horizontal", onSelect, className, children, style } = props;
+  const { defaultIndex = "0", mode = "horizontal", onSelect, className, children, style, theme = 'light', } = props;
   const [activeIndex, setActiveIndex] = useState(defaultIndex); // 当前激活菜单
 
-  const classes = classNames(
-    {
-      'is-vertical': mode === 'vertical',
-      'is-horizontal': mode === 'horizontal',
-    },
-    className
-  )
+  const prefixCls = getPrefixCls('menu', '');
+  const menuClassName = classNames(`${prefixCls}-${theme}`, className);
 
   const handleSelect = (index: string) => {
     setActiveIndex(index);
@@ -45,12 +56,46 @@ const Menu: React.FC<MenuProps> = (props) => {
   const passedContext: MenuContextProps = {
     index: activeIndex ?? '0',
     onSelect: handleSelect,
-    mode
+    mode,
+    prefixCls
   }
 
-  return <ul className={classes} style={style} data-testid="test-menu">
+  const renderChildren = () => {
+    return React.Children.map(children, (child, index) => {
+      const childElement = child as React.FunctionComponentElement<MenuItemProps>
+      const { displayName } = childElement.type
+      if (displayName === 'MenuItem' || displayName === 'SubMenu') {
+        return React.cloneElement(childElement, {
+          index: index.toString()
+        })
+      } else {
+        console.error("Warning: Menu has a child which is not a MenuItem component")
+      }
+    })
+  }
+
+
+  return <ul className={menuClassName} style={style} data-testid="test-menu">
     <MenuContext.Provider value={passedContext}>
-      {children}
+      {/* {children} */}
+      <RcMenu
+          // getPopupContainer={getPopupContainer}
+          // overflowedIndicator={<EllipsisOutlined />}
+          overflowedIndicatorPopupClassName={`${prefixCls}-${theme}`}
+          mode={mode}
+          // selectable={mergedSelectable}
+          // onClick={onItemClick}
+          // {...passedProps}
+          // inlineCollapsed={mergedInlineCollapsed}
+          className={menuClassName}
+          prefixCls={prefixCls}
+          // direction={direction}
+          // defaultMotions={defaultMotions}
+          // expandIcon={mergedExpandIcon}
+          // ref={ref}
+        >
+          {renderChildren()}
+        </RcMenu>
     </MenuContext.Provider>
   </ul>;
 };

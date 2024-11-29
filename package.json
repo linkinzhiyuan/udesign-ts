@@ -47,6 +47,7 @@
     "postcss-normalize": "^10.0.1",
     "postcss-preset-env": "^7.0.1",
     "prompts": "^2.4.2",
+    "rc-menu": "^9.16.0",
     "rc-motion": "^2.9.3",
     "rc-resize-observer": "^1.4.0",
     "rc-util": "^5.43.0",
